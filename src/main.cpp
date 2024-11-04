@@ -9,12 +9,15 @@
 #include <tensorstore/tensorstore.h>
 #include <tensorstore/util/status.h>
 #include <typeinfo>
+#include <cstdlib> // for getenv
+#include <string>
 
 using ::tensorstore::Context;
-::nlohmann::json GetJsonSpec() {
+::nlohmann::json GetZarr3JsonSpec()
+{
   return {
       {"driver", "zarr3"},
-      {"kvstore", {{"driver", "file"}, {"path", "/tmp/testo"}}},
+      {"kvstore", {{"driver", "file"}, {"path", "/tmp/testo/zarrV3"}}},
       {"metadata",
        {{"data_type", "int16"},
         {"shape", {100, 100}},
@@ -24,6 +27,38 @@ using ::tensorstore::Context;
   };
 }
 
+::nlohmann::json GetZarr2JsonSpec()
+{
+  return {
+      {"driver", "zarr"},
+      {"kvstore", {{"driver", "file"}, {"path", "/tmp/testo/zarrV2"}}},
+      {"metadata",
+       {//{"compressor", nullptr},
+        {"dtype", "<i2"},
+        // {"fill_value", nullptr},
+        // {"filters", nullptr},
+        {"order", "C"},
+        {"shape", {100, 100}},
+        {"chunks", {10, 10}},
+        {"zarr_format", 2}}},
+  };
+}
+
+::nlohmann::json GetJsonSpec()
+{
+  // Get environment variable, default to "2" if not set
+  const char *zarr_version = std::getenv("ZARR_VERSION");
+  std::string version = zarr_version ? zarr_version : "2";
+
+  if (version == "3")
+  {
+    return GetZarr3JsonSpec();
+  }
+  else
+  {
+    return GetZarr2JsonSpec();
+  }
+}
 
 // try to create a zarr and write a 100*100 random array in it
 int main() {
