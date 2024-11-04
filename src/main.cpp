@@ -33,10 +33,8 @@ using ::tensorstore::Context;
       {"driver", "zarr"},
       {"kvstore", {{"driver", "file"}, {"path", "/tmp/testo/zarrV2"}}},
       {"metadata",
-       {//{"compressor", nullptr},
+       {
         {"dtype", "<i2"},
-        // {"fill_value", nullptr},
-        // {"filters", nullptr},
         {"order", "C"},
         {"shape", {100, 100}},
         {"chunks", {10, 10}},
@@ -52,10 +50,12 @@ using ::tensorstore::Context;
 
   if (version == "3")
   {
+    std::cout << "Using Zarr V3" << std::endl;
     return GetZarr3JsonSpec();
   }
   else
   {
+    std::cout << "Using Zarr V2" << std::endl;
     return GetZarr2JsonSpec();
   }
 }

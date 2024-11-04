@@ -3,5 +3,10 @@
 ```
 cmake -B build .
 make -C build -j 4
+
+export ZARR_VERSION=2
+./build/my_target
+
+export ZARR_VERSION=3
 ./build/my_target
 ```
