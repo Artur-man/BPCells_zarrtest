@@ -10,3 +10,9 @@ export ZARR_VERSION=2
 export ZARR_VERSION=3
 ./build/my_target
 ```
+
+In order to run the quick benchmark: 
+
+```
+bash grid_benchmark.sh
+```

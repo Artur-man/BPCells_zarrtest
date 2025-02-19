@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -13,6 +14,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <chrono>
 
 // namespaces
 using ::tensorstore::Context;
@@ -43,7 +45,10 @@ using namespace std;
         {"order", "C"},
         {"shape", shape},
         {"chunks", chunk},
-        {"zarr_format", 2}}},
+        {"zarr_format", 2},
+        {"compressor", {{"id", "blosc"}, {"shuffle", -1}, {"clevel", 5}, {"cname", "lz4"}}}
+       }
+      } 
   };
 }
 
@@ -67,6 +72,9 @@ using namespace std;
 
 // try to create a zarr and write a 100 random array in it
 int main(int argc, char **argv) {
+
+  // file
+  ofstream MyFile("test.txt");
 
   // context
   auto context = Context::Default();
@@ -119,24 +127,38 @@ int main(int argc, char **argv) {
     std::cerr << "Error changing Zarr file: " << change_result << std::endl;
     return -1;
   }
-  //std::cout << "Changed Zarr file size successfully! Before:" <<  shape[0] << " After: " << store_result.size() << std::endl;
 
   // test insert new data
+
+  // begin time
+  using clock = std::chrono::system_clock;
+  using sec = std::chrono::duration<double>;
+  const auto before = clock::now();
+
+  // append data
   auto new_array = tensorstore::AllocateArray<int16_t>({add_size});
   for (tensorstore::Index i = 0; i < add_size; ++i) {
     new_array(i) = (rand() % 10) + 1;
   }
   auto interval = tensorstore::Dims(0).SizedInterval(shape[0],add_size);
   auto rewrite_result = tensorstore::Write(new_array, store_result | interval).status();
+
+  // end time
+  const sec duration = clock::now() - before;
+  std::cout << "It took " << duration.count() << "s" << std::endl;
   if (!rewrite_result.ok()) {
     std::cerr << "Error rewriting Zarr file: " << rewrite_result << std::endl;
     return -1;
   }
   std::cout << "Rewrote Zarr file size successfully!" << std::endl;
-  
+
   // read data
   read_test = tensorstore::Read(store_result).value();
   std::cout << read_test << std::endl;
+
+  // write to file
+  MyFile << shape[0] << " " << chunk[0] << " " << add_size << " " << duration.count() << "\n";
+  MyFile.close();
 
   return 0;
 }

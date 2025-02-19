@@ -1,2 +1,7 @@
 build/
-zarrtest.Rproj
+*.Rproj
+.Rproj.user
+*.txt
+tests/
+tests/*
+tests/*/*
