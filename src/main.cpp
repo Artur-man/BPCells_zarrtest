@@ -66,10 +66,20 @@ using namespace std;
 }
 
 // try to create a zarr and write a 100 random array in it
-int main() {
+int main(int argc, char **argv) {
+
+  // context
   auto context = Context::Default();
-  std::vector<int> shape = {20};
-  std::vector<int> chunk = {10};
+
+  // get arguements for executable: ./build/my_target <n shape> <chunk size> <n append size>
+  if (argc > 4) {
+    std::cerr << "You cannot have more than three arguments: <n shape> <chunk size> <n append size>" << std::endl;
+    return -1;
+  }
+  std::vector<int> shape = {atoi(argv[1])};
+  std::vector<int> chunk = {atoi(argv[2])};
+  int add_size = atoi(argv[3]);
+  std::cerr << shape[0] << " " << chunk[0] << " " << add_size << std::endl;
 
   // test create data
   auto store_result = tensorstore::Open(GetJsonSpec(shape, chunk), context,
@@ -101,7 +111,6 @@ int main() {
   std::cout << read_test << std::endl;
 
   // test change data size
-  int add_size = 10;
   auto change_result = tensorstore::Resize(store_result,
     tensorstore::span<const tensorstore::Index, 1>({tensorstore::kImplicit}),
     tensorstore::span<const tensorstore::Index, 1>({shape[0]+add_size})
@@ -110,7 +119,7 @@ int main() {
     std::cerr << "Error changing Zarr file: " << change_result << std::endl;
     return -1;
   }
-  std::cout << "Changed Zarr file size successfully!" << std::endl;
+  //std::cout << "Changed Zarr file size successfully! Before:" <<  shape[0] << " After: " << store_result.size() << std::endl;
 
   // test insert new data
   auto new_array = tensorstore::AllocateArray<int16_t>({add_size});
