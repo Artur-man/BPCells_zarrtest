@@ -93,6 +93,9 @@
         "functional": "cpp",
         "iterator": "cpp",
         "utility": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "__verbose_abort": "cpp",
+        "execution": "cpp",
+        "print": "cpp"
     }
 }

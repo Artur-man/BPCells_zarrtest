@@ -19,4 +19,5 @@ target_link_libraries(
     tensorstore::driver_zarr
     tensorstore::driver_zarr3 
     tensorstore::kvstore_file
+    tensorstore::index_space_dim_expression
 )
