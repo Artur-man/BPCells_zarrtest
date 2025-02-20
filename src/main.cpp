@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
   int add_size = atoi(argv[3]);
   std::cerr << shape[0] << " " << chunk[0] << " " << add_size << std::endl;
 
-  // test create data
+  // test create array
   auto store_result = tensorstore::Open(GetJsonSpec(shape, chunk), context,
                                         tensorstore::OpenMode::create |
                                             tensorstore::OpenMode::open,
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
   }
   std::cout << "Zarr file created successfully!" << std::endl;
 
-  // test add data
+  // test generate array
   srand(time(0));
   auto array = tensorstore::AllocateArray<int16_t>({shape[0]});
   for (tensorstore::Index i = 0; i < shape[0]; ++i) {
@@ -118,7 +118,18 @@ int main(int argc, char **argv) {
   auto read_test = tensorstore::Read(store_result).value();
   std::cout << read_test << std::endl;
 
-  // test change data size
+  // create new array
+  auto new_array = tensorstore::AllocateArray<int16_t>({add_size});
+  for (tensorstore::Index i = 0; i < add_size; ++i) {
+    new_array(i) = (rand() % 10) + 1;
+  }
+
+  // begin time
+  using clock = std::chrono::system_clock;
+  using sec = std::chrono::duration<double>;
+  const auto before = clock::now();
+
+  // test change array size
   auto change_result = tensorstore::Resize(store_result,
     tensorstore::span<const tensorstore::Index, 1>({tensorstore::kImplicit}),
     tensorstore::span<const tensorstore::Index, 1>({shape[0]+add_size})
@@ -128,18 +139,7 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  // test insert new data
-
-  // begin time
-  using clock = std::chrono::system_clock;
-  using sec = std::chrono::duration<double>;
-  const auto before = clock::now();
-
-  // append data
-  auto new_array = tensorstore::AllocateArray<int16_t>({add_size});
-  for (tensorstore::Index i = 0; i < add_size; ++i) {
-    new_array(i) = (rand() % 10) + 1;
-  }
+  // insert new array
   auto interval = tensorstore::Dims(0).SizedInterval(shape[0],add_size);
   auto rewrite_result = tensorstore::Write(new_array, store_result | interval).status();
 
@@ -152,7 +152,7 @@ int main(int argc, char **argv) {
   }
   std::cout << "Rewrote Zarr file size successfully!" << std::endl;
 
-  // read data
+  // read array
   read_test = tensorstore::Read(store_result).value();
   std::cout << read_test << std::endl;
 
