@@ -1,6 +1,6 @@
 # BPCells_zarrtest
 
-How to build
+How to build:
 
 ```
 cmake -DCMAKE_INSTALL_PREFIX=./package -B build . 
@@ -10,7 +10,7 @@ mkdir -p package/libs
 cp build/_deps/tensorstore-build/*.a package/libs/.
 ```
 
-
+Run scripts:
 
 ```
 export ZARR_VERSION=2
