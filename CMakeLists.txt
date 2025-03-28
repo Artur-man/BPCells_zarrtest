@@ -10,6 +10,7 @@ FetchContent_Declare(
   tensorstore
   URL "https://github.com/google/tensorstore/archive/refs/tags/v0.1.62.tar.gz"
 )
+message(STATUS "TensorStore build dir is: ${tensorstore_BINARY_DIR}")
 
 # Additional FetchContent_Declare calls as needed...
 FetchContent_MakeAvailable(tensorstore)
@@ -35,17 +36,17 @@ install(TARGETS my_target
 
 # Automatically find and install all .a files built by TensorStore
 file(GLOB TENSORSTORE_STATIC_LIBS
-     "build/_deps/tensorstore-build/libtensorstore_*.a")
+     "${tensorstore_BINARY_DIR}/libtensorstore_*.a")
 
 # Manually install static .a files
 install(FILES ${TENSORSTORE_STATIC_LIBS}
         DESTINATION ${CMAKE_INSTALL_LIBDIR})
 # install(FILES
-#        build/_deps/tensorstore-build/libtensorstore_tensorstore*
-#        build/_deps/tensorstore-build/libtensorstore_driver_zarr*
-#        build/_deps/tensorstore-build/libtensorstore_driver_zarr3*
-#        build/_deps/tensorstore-build/libtensorstore_kvstore*
-#        build/_deps/tensorstore-build/libtensorstore_index_space_dim_expression*
+#        build/_deps/tensorstore-build/libtensorstore_tensorstore*.a
+#        build/_deps/tensorstore-build/libtensorstore_driver_zarr*.a
+#        build/_deps/tensorstore-build/libtensorstore_driver_zarr3*.a
+#        build/_deps/tensorstore-build/libtensorstore_kvstore*.a
+#        build/_deps/tensorstore-build/libtensorstore_index_space_dim_expression*.a
 #        DESTINATION ${CMAKE_INSTALL_LIBDIR}
 # )
 
