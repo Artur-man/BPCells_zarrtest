@@ -41,14 +41,6 @@ file(GLOB TENSORSTORE_STATIC_LIBS
 # Manually install static .a files
 install(FILES ${TENSORSTORE_STATIC_LIBS}
         DESTINATION ${CMAKE_INSTALL_LIBDIR})
-# install(FILES
-#        build/_deps/tensorstore-build/libtensorstore_tensorstore*.a
-#        build/_deps/tensorstore-build/libtensorstore_driver_zarr*.a
-#        build/_deps/tensorstore-build/libtensorstore_driver_zarr3*.a
-#        build/_deps/tensorstore-build/libtensorstore_kvstore*.a
-#        build/_deps/tensorstore-build/libtensorstore_index_space_dim_expression*.a
-#        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-# )
 
 # Install headers from your source directory
 install(DIRECTORY ${tensorstore_SOURCE_DIR}/tensorstore
